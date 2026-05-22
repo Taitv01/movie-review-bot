@@ -1,0 +1,31 @@
+# Movie Review Bot - Free Dependencies
+# All tools are 100% free, no credit card required
+
+# AI Script Generation
+google-generativeai>=0.8.0    # Google Gemini API (free tier)
+
+# Voice Generation
+edge-tts>=6.1.0               # Microsoft Edge TTS (free)
+
+# Video Processing
+moviepy>=2.0.0                # Video editing library
+Pillow>=10.0.0                # Image processing
+
+# Movie Data APIs
+tmdbv3api>=1.9.0              # TMDB API client
+requests>=2.31.0              # HTTP requests
+
+# YouTube Upload
+google-api-python-client>=2.100.0    # YouTube Data API v3
+google-auth-oauthlib>=1.1.0          # OAuth2 authentication
+google-auth-httplib2>=0.1.0          # HTTP lib for auth
+
+# Utilities
+python-dotenv>=1.0.0          # Environment variables
+aiofiles>=23.0.0              # Async file operations
+tqdm>=4.66.0                  # Progress bars
+
+# FFmpeg (system dependency - install separately)
+# Windows: choco install ffmpeg OR download from ffmpeg.org
+# Linux: sudo apt install ffmpeg
+# Mac: brew install ffmpeg
