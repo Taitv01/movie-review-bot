@@ -26,7 +26,7 @@ for d in [AUDIO_DIR, SUBTITLES_DIR, THUMBNAILS_DIR, VIDEOS_DIR]:
     d.mkdir(parents=True, exist_ok=True)
 
 # ── API Keys ─────────────────────────────────────────────────
-GEMINI_API_KEY = os.getenv("GEMINI_API_KEY", "")
+DEEPSEEK_API_KEY = os.getenv("DEEPSEEK_API_KEY", "")
 TMDB_API_KEY = os.getenv("TMDB_API_KEY", "")
 OMDB_API_KEY = os.getenv("OMDB_API_KEY", "")
 YOUTUBE_CLIENT_SECRET_FILE = os.getenv("YOUTUBE_CLIENT_SECRET_FILE", "client_secret.json")

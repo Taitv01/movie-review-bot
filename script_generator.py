@@ -1,23 +1,34 @@
 """
 Movie Review Bot - Script Generator
-Uses Google Gemini API (free) to generate movie review scripts.
+Uses DeepSeek API (free tier) to generate movie review scripts.
+
+DeepSeek free tier: Much more generous than Gemini
+- No strict daily limit
+- High quality for long-form content
+- OpenAI-compatible API
 """
 
-import google.generativeai as genai
+import requests
+import json
 from typing import Optional
 from movie_data import MovieData
-from config import GEMINI_API_KEY, CHANNEL_LANGUAGE, MIN_WORD_COUNT, SCRIPT_PROMPTS
+from config import CHANNEL_LANGUAGE, MIN_WORD_COUNT, SCRIPT_PROMPTS
 
+# DeepSeek API configuration
+DEEPSEEK_API_URL = "https://api.deepseek.com/v1/chat/completions"
 
-# Configure Gemini
-if GEMINI_API_KEY:
-    genai.configure(api_key=GEMINI_API_KEY)
+# Import API key from config
+try:
+    from config import DEEPSEEK_API_KEY
+except ImportError:
+    DEEPSEEK_API_KEY = ""
 
 
 def generate_review_script(movie: MovieData, language: str = None) -> Optional[str]:
-    """Generate a movie review script using Gemini AI."""
-    if not GEMINI_API_KEY:
-        print("Error: GEMINI_API_KEY not set")
+    """Generate a movie review script using DeepSeek AI."""
+    if not DEEPSEEK_API_KEY:
+        print("Error: DEEPSEEK_API_KEY not set")
+        print("Get free API key at: https://platform.deepseek.com")
         return None
 
     language = language or CHANNEL_LANGUAGE
@@ -46,22 +57,39 @@ def generate_review_script(movie: MovieData, language: str = None) -> Optional[s
     prompt += f"\n\nIMPORTANT: The script must be at least {min_words} words to ensure 15+ minutes of speaking time."
 
     try:
-        # Use Gemini Pro model
-        model = genai.GenerativeModel("gemini-2.0-flash")
+        # Call DeepSeek API (OpenAI-compatible)
+        headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {DEEPSEEK_API_KEY}",
+        }
 
-        # Generate response
-        response = model.generate_content(
-            prompt,
-            generation_config=genai.types.GenerationConfig(
-                temperature=0.8,
-                top_p=0.95,
-                top_k=40,
-                max_output_tokens=8192,
-            ),
+        payload = {
+            "model": "deepseek-chat",
+            "messages": [
+                {
+                    "role": "system",
+                    "content": "You are a professional movie reviewer for YouTube. Write detailed, engaging reviews in a natural, conversational tone."
+                },
+                {
+                    "role": "user",
+                    "content": prompt,
+                }
+            ],
+            "temperature": 0.8,
+            "max_tokens": 8192,
+            "stream": False,
+        }
+
+        response = requests.post(
+            DEEPSEEK_API_URL,
+            headers=headers,
+            json=payload,
+            timeout=120,  # Long timeout for script generation
         )
 
-        if response.text:
-            script = response.text
+        if response.status_code == 200:
+            data = response.json()
+            script = data["choices"][0]["message"]["content"]
             word_count = len(script.split())
 
             print(f"Generated script: {word_count} words (target: {min_words}+ words)")
@@ -71,7 +99,8 @@ def generate_review_script(movie: MovieData, language: str = None) -> Optional[s
 
             return script
         else:
-            print("Error: Empty response from Gemini")
+            print(f"Error: DeepSeek API returned {response.status_code}")
+            print(response.text)
             return None
 
     except Exception as e:
@@ -201,38 +230,16 @@ def generate_tags(movie: MovieData, language: str = None) -> list[str]:
 
 # ── Test Function ────────────────────────────────────────────
 if __name__ == "__main__":
-    from movie_data import fetch_trending_movies, fetch_movie_details
+    print("Testing script generator with DeepSeek API...")
+    print(f"API Key set: {'Yes' if DEEPSEEK_API_KEY else 'No'}")
 
-    print("Testing script generator...")
-
-    # Fetch a movie
-    trending = fetch_trending_movies()
-    if trending:
-        tmdb_id = trending[0].get("id")
-        movie = fetch_movie_details(tmdb_id)
-
-        if movie:
-            print(f"\nMovie: {movie.title} ({movie.year})")
-            print(f"Rating: {movie.rating}/10")
-
-            # Generate script
-            print("\nGenerating script...")
-            script = generate_review_script(movie)
-
-            if script:
-                word_count = len(script.split())
-                print(f"Script generated: {word_count} words")
-                print(f"\nFirst 500 characters:")
-                print(script[:500])
-
-                # Generate title
-                title = generate_title(movie)
-                print(f"\nTitle: {title}")
-
-                # Generate tags
-                tags = generate_tags(movie)
-                print(f"\nTags: {', '.join(tags[:10])}")
-            else:
-                print("Failed to generate script")
-    else:
-        print("No trending movies found")
+    if not DEEPSEEK_API_KEY:
+        print("\nTo set up DeepSeek API:")
+        print("1. Go to https://platform.deepseek.com")
+        print("2. Sign up (free)")
+        print("3. Get API key")
+        print("4. Add to .env: DEEPSEEK_API_KEY=your_key")
+        print("\nFree tier limits:")
+        print("- 100,000 tokens/day")
+        print("- No strict request limit")
+        print("- Enough for 5-10 scripts/day")

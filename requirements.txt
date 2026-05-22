@@ -1,8 +1,7 @@
 # Movie Review Bot - Free Dependencies
 # All tools are 100% free, no credit card required
 
-# AI Script Generation
-google-generativeai>=0.8.0    # Google Gemini API (free tier)
+# AI Script Generation (DeepSeek API - free tier, OpenAI-compatible)
 
 # Voice Generation
 edge-tts>=6.1.0               # Microsoft Edge TTS (free)

@@ -5,7 +5,7 @@ Tự động tạo video review phim YouTube sử dụng AI. 100% miễn phí.
 ## Tính năng
 
 - ✅ Tự động fetch phim trending từ TMDB
-- ✅ Tạo script review bằng Google Gemini AI (miễn phí)
+- ✅ Tạo script review bằng DeepSeek AI (miễn phí, 100K tokens/day)
 - ✅ Tạo audio bằng Edge TTS (miễn phí, giọng tự nhiên)
 - ✅ Tạo phụ đề SRT từ script
 - ✅ Tạo thumbnail tự động
@@ -18,7 +18,7 @@ Tự động tạo video review phim YouTube sử dụng AI. 100% miễn phí.
 
 | Component | Tool | Cost |
 |-----------|------|------|
-| Script AI | Google Gemini API | $0 |
+| Script AI | DeepSeek API | $0 |
 | Voice | Edge TTS | $0 |
 | Video | FFmpeg + MoviePy | $0 |
 | Thumbnails | Pillow + TMDB | $0 |
@@ -60,10 +60,10 @@ brew install ffmpeg
 
 ### 4. Lấy API Keys (miễn phí)
 
-#### Google Gemini API
-1. Vào https://aistudio.google.com
-2. Đăng nhập Google account
-3. Click "Get API key"
+#### DeepSeek API
+1. Vào https://platform.deepseek.com
+2. Đăng ký tài khoản (miễn phí)
+3. Vào API Keys section
 4. Copy API key
 
 #### TMDB API
@@ -93,7 +93,7 @@ cp .env.example .env
 Edit `.env` và điền API keys:
 
 ```env
-GEMINI_API_KEY=your_gemini_api_key
+DEEPSEEK_API_KEY=your_deepseek_api_key
 TMDB_API_KEY=your_tmdb_api_key
 OMDB_API_KEY=your_omdb_api_key
 CHANNEL_LANGUAGE=vi
@@ -136,7 +136,7 @@ Thêm các secrets:
 
 | Secret | Value |
 |--------|-------|
-| `GEMINI_API_KEY` | Gemini API key |
+| `DEEPSEEK_API_KEY` | DeepSeek API key |
 | `TMDB_API_KEY` | TMDB API key |
 | `OMDB_API_KEY` | OMDB API key |
 | `YOUTUBE_CLIENT_SECRET` | Nội dung client_secret.json |
@@ -190,7 +190,7 @@ movie-review-bot/
 ## Chi phí
 
 **$0** - Tất cả tools đều miễn phí:
-- Google Gemini API: Free tier (15 req/min, 1M tokens/day)
+- DeepSeek API: Free tier (100K tokens/day, ~5-10 scripts/day)
 - Edge TTS: Completely free
 - FFmpeg + MoviePy: Open source
 - TMDB API: Free
@@ -202,7 +202,7 @@ movie-review-bot/
 ### "FFmpeg not found"
 Cài đặt FFmpeg và thêm vào PATH.
 
-### "GEMINI_API_KEY not set"
+### "DEEPSEEK_API_KEY not set"
 Kiểm tra file `.env` đã có API key chưa.
 
 ### "Video too short"
